@@ -61,7 +61,7 @@ def save_hourly_data(weather_data, file):
     file.write(out_str)
 
 
-API_KEY = ""
+API_KEY = "abfe41114c64ca236e3443b9e6f7376a"
 URL = "https://api.darksky.net/forecast/{}/{},{},{}"
 
 lat_lng = {}
