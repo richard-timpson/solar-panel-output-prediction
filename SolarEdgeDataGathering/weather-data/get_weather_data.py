@@ -33,6 +33,9 @@ def save_daily_data(weather_data, file):
     output.append(try_get("cloudCover", weather_data))
     output.append(try_get("uvIndex", weather_data))
     output.append(try_get("visibility", weather_data))
+    output.append(try_get("ozone", weather_data))
+    output.append(try_get("sunriseTime ", weather_data))
+    output.append(try_get("sunsetTime ", weather_data))
 
     out_str = ",".join(output) + "\n"
     file.write(out_str)
@@ -46,6 +49,8 @@ def save_hourly_data(weather_data, file):
 
     output.append(try_get("precipIntensity", weather_data))
     output.append(try_get("precipProbability", weather_data))
+    output.append(try_get("precipAccumulation", weather_data))
+    output.append(try_get("precipType", weather_data))
     output.append(try_get("temperature", weather_data))
     output.append(try_get("apparentTemperature", weather_data))
     output.append(try_get("dewPoint", weather_data))
@@ -53,9 +58,11 @@ def save_hourly_data(weather_data, file):
     output.append(try_get("pressure", weather_data))
     output.append(try_get("windSpeed", weather_data))
     output.append(try_get("windBearing", weather_data))
+    output.append(try_get("windGust", weather_data))
     output.append(try_get("cloudCover", weather_data))
     output.append(try_get("uvIndex", weather_data))
     output.append(try_get("visibility", weather_data))
+    output.append(try_get("ozone", weather_data))
 
     out_str = ",".join(output) + "\n"
     file.write(out_str)
@@ -86,10 +93,10 @@ for site in sites:
         os.mkdir(directory)
 
     with open(f"{directory}/weather_data_hourly.csv", "w+") as file:
-        file.write("date,precipIntensity,precipProbability,temperature,apparentTemperature,dewPoint,humidity,pressure,windSpeed,windBearing,cloudCover,uvIndex,visibility\n")
+        file.write("date,precipIntensity,precipProbability,precipAccumulation,precipType,temperature,apparentTemperature,dewPoint,humidity,pressure,windSpeed,windBearing,windGust,cloudCover,uvIndex,visibility,ozone\n")
 
     with open(f"{directory}/weather_data_daily.csv", "w+") as file:
-        file.write("date,precipIntensity,precipIntensityMax,precipProbability,precipAccumulation,precipType,temperatureHigh,temperatureLow,dewPoint,humidity,pressure,windSpeed,windBearing,cloudCover,uvIndex,visibility\n")
+        file.write("date,precipIntensity,precipIntensityMax,precipProbability,precipAccumulation,precipType,temperatureHigh,temperatureLow,dewPoint,humidity,pressure,windSpeed,windBearing,cloudCover,uvIndex,visibility,ozone,sunriseTime,sunsetTime\n")
 
     n = 0
     current_date = start_date
