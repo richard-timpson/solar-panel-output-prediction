@@ -61,6 +61,7 @@ def split(file, window_size, train_number, test_number):
     with open(file) as csvfile:
         reader = csv.reader(csvfile)
         title_row = next(reader)
+        key_to_row_idx = {val: i for i, val in enumerate(title_row)}
 
         train_rows = []
         test_rows = []
@@ -86,9 +87,79 @@ def split(file, window_size, train_number, test_number):
         for day_rows in window_days:
             train_rows.extend(day_rows)
 
-        return train_rows, test_rows
+    return train_rows, test_rows
+
+
+def get_category_map(row_lists, idx=4):
+
+    category_map = {}
+    next_idx = 0
+
+    for row_list in row_lists:
+        for row in row_list:
+            val = row[idx]
+
+            # Includes a "none" category for ""
+            if val not in category_map:
+                category_map[row[idx]] = next_idx
+                next_idx += 1
+
+    return category_map
+
+
+def to_vector(row_lists):
+
+    categorical_rows = set([4])
+    category_maps = {}
+    for categorical_row_idx in categorical_rows:
+        category_maps[categorical_row_idx] = get_category_map(
+            row_lists, categorical_row_idx)
+    print(category_maps)
+
+    feature_matrices = []
+    target_vectors = []
+
+    for row_list in row_lists:
+        feature_rows = []
+        targets = []
+
+        for row in row_list:
+            target = row[-1]
+            if target == "":
+                continue
+            targets.append(float(target))
+
+            feature_list = []
+            # Skip the date and production columns
+            for feature_idx in range(1, len(row)-1):
+
+                feature_val = row[feature_idx]
+
+                if feature_idx in categorical_rows:  # categorical feature
+                    category_map = category_maps[feature_idx]
+                    l = [0] * len(category_map)
+                    l[category_map[feature_val]] = 1
+                    feature_list.extend(l)
+                else:  # Regular (real valued) feature
+                    if feature_val == "":
+                        feature_list.append(0.0)
+                    else:
+                        feature_list.append(float(feature_val))
+
+            feature_rows.append(np.array(feature_list))
+
+        feature_matrices.append(np.vstack(feature_rows))
+        target_vectors.append(np.array(targets))
+
+    # Some sanity checks:
+    assert(feature_matrices[0].shape[0] == len(target_vectors[0]))
+    assert(feature_matrices[0].shape[1] == feature_matrices[1].shape[1])
+
+    return feature_matrices, target_vectors
 
 
 file = f"{DATA_DIR}/103941/combination_data/production_weather_combination.csv"
 
 train, test = split(file, 3, 2, 1)
+
+[X_train, X_test], [Y_train, Y_test] = to_vector([train, test])
