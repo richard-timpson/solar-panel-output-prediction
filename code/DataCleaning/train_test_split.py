@@ -125,9 +125,15 @@ def to_vector(row_lists):
 
         for row in row_list:
             target = row[-1]
-            if target == "":
+            try:
+                target_float = float(target)
+            except:
                 continue
-            targets.append(float(target))
+            else:    
+                if target_float == 0.0:
+                    # print("Skipping target")
+                    continue
+                targets.append(target_float)
 
             feature_list = []
             # Skip the date and production columns
@@ -158,8 +164,8 @@ def to_vector(row_lists):
     return feature_matrices, target_vectors
 
 
-file = f"{DATA_DIR}/103941/combination_data/production_weather_combination.csv"
+# file = f"{DATA_DIR}/103941/combination_data/production_weather_combination.csv"
 
-train, test = split(file, 3, 2, 1)
+# train, test = split(file, 3, 2, 1)
 
-[X_train, X_test], [Y_train, Y_test] = to_vector([train, test])
+# [X_train, X_test], [Y_train, Y_test] = to_vector([train, test])
