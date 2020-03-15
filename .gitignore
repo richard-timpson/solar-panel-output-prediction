@@ -2,3 +2,6 @@
 .ipynb_checkpoints/
 */.ipynb_checkpoints
 */.ipynb_checkpoints/*
+.vscode
+*.vscode
+.vscode/*
