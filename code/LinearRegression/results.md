@@ -130,3 +130,14 @@
 * Mean Absolute Error: 2915.404849529006
 * Mean Absolute Percentage Error: 1351148.3221343374
 * r2 score: 0.4924960872218367
+
+## Meeting questions
+1. How to deal with time series nature of the data
+2. How to interpret results for use in an actual production system. 
+What is good enough?
+3. Are the proposed model improvments good enough? Is there anything else you recommend?
+
+
+## Meeting notes
+1. Transfer learning. Transferring one model to others. Are there outlier data sets?
+2. 
