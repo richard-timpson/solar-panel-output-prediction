@@ -1,0 +1,522 @@
+[
+    {
+        "id": 103941,
+        "name": "Anon",
+        "accountId": 53921,
+        "status": "Active",
+        "peakPower": 10.36,
+        "lastUpdateTime": "2020-01-21",
+        "currency": "USD",
+        "installationDate": "2015-01-31",
+        "ptoDate": null,
+        "notes": "",
+        "type": "Optimizers & Inverters",
+        "location": {
+            "country": "United States",
+            "state": "Anon",
+            "city": "Anon",
+            "address": "Anon",
+            "address2": "",
+            "zip": "Anon",
+            "timeZone": "America/Phoenix",
+            "countryCode": "US",
+            "stateCode": "AZ",
+            "lat": 36.9587533,
+            "long": -112.9758274
+        },
+        "alertQuantity": 0,
+        "primaryModule": {
+            "manufacturerName": "RENESOLA",
+            "modelName": "SE11400A-US",
+            "maximumPower": 310.0,
+            "temperatureCoef": -0.4
+        },
+        "time_interval": {
+            "startDate": "2015-02-09",
+            "endDate": "2020-01-21"
+        },
+        "irradiance_site_id": 113805
+    },
+    {
+        "id": 1232644,
+        "name": "Anon",
+        "accountId": 53921,
+        "status": "Active",
+        "peakPower": 7.6,
+        "lastUpdateTime": "2020-01-21",
+        "currency": "USD",
+        "installationDate": "2019-08-01",
+        "ptoDate": null,
+        "notes": "",
+        "type": "Optimizers & Inverters",
+        "location": {
+            "country": "United States",
+            "state": "Anon",
+            "city": "Anon",
+            "address": "Anon",
+            "address2": "",
+            "zip": "Anon",
+            "timeZone": "America/Denver",
+            "countryCode": "US",
+            "stateCode": "UT",
+            "lat": 37.2065196,
+            "long": -113.27477809999999
+        },
+        "alertQuantity": 0,
+        "primaryModule": {
+            "manufacturerName": "Silfab",
+            "modelName": "SLG290P",
+            "maximumPower": 285.0,
+            "temperatureCoef": -0.31
+        },
+        "time_interval": {
+            "startDate": "2019-08-14",
+            "endDate": "2020-01-21"
+        },
+        "irradiance_site_id": 116439
+    },
+    {
+        "id": 787197,
+        "name": "Anon",
+        "accountId": 53921,
+        "status": "Active",
+        "peakPower": 12.0,
+        "lastUpdateTime": "2020-01-21",
+        "installationDate": "2018-07-21",
+        "ptoDate": null,
+        "notes": "",
+        "type": "Optimizers & Inverters",
+        "location": {
+            "country": "United States",
+            "state": "Anon",
+            "city": "Anon",
+            "address": "Anon",
+            "address2": "",
+            "zip": "Anon",
+            "timeZone": "America/Phoenix",
+            "countryCode": "US",
+            "stateCode": "AZ",
+            "lat": 36.9902621,
+            "long": -112.9757702
+        },
+        "alertQuantity": 0,
+        "primaryModule": {
+            "manufacturerName": "Hanwha Q-Cells",
+            "modelName": " L-G4.2 330",
+            "maximumPower": 330.0,
+            "temperatureCoef": -29.0
+        },
+        "time_interval": {
+            "startDate": "2018-07-23",
+            "endDate": "2020-01-21"
+        },
+        "irradiance_site_id": 114245
+    },
+    {
+        "id": 238320,
+        "name": "Anon",
+        "accountId": 53921,
+        "status": "Active",
+        "peakPower": 6.9,
+        "lastUpdateTime": "2017-10-13",
+        "installationDate": "2016-03-31",
+        "ptoDate": null,
+        "notes": "",
+        "type": "Optimizers & Inverters",
+        "location": {
+            "country": "United States",
+            "state": "Anon",
+            "city": "Anon",
+            "address": "Anon",
+            "address2": "",
+            "zip": "Anon",
+            "timeZone": "America/Los_Angeles",
+            "countryCode": "US",
+            "stateCode": "CA",
+            "lat": 37.5034316,
+            "long": -122.3064554
+        },
+        "alertQuantity": 3,
+        "alertSeverity": "HIGH",
+        "primaryModule": {
+            "manufacturerName": "LG",
+            "modelName": "LG300N1C-A3",
+            "maximumPower": 300.0
+        },
+        "time_interval": {
+            "startDate": "2016-03-31",
+            "endDate": "2017-10-13"
+        },
+        "irradiance_site_id": 119311
+    },
+    {
+        "id": 349060,
+        "name": "Anon",
+        "accountId": 53921,
+        "status": "Active",
+        "peakPower": 10.5,
+        "lastUpdateTime": "2020-01-21",
+        "currency": "USD",
+        "installationDate": "2016-11-18",
+        "ptoDate": null,
+        "notes": "",
+        "type": "Optimizers & Inverters",
+        "location": {
+            "country": "United States",
+            "state": "Anon",
+            "city": "Anon",
+            "address": "Anon",
+            "address2": "",
+            "zip": "Anon",
+            "timeZone": "America/Phoenix",
+            "countryCode": "US",
+            "stateCode": "AZ",
+            "lat": 34.646224700000005,
+            "long": -111.7885507
+        },
+        "alertQuantity": 0,
+        "primaryModule": {
+            "manufacturerName": "solar world",
+            "modelName": "SW 300 MONO",
+            "maximumPower": 300.0,
+            "temperatureCoef": -0.3
+        },
+        "time_interval": {
+            "startDate": "2016-12-28",
+            "endDate": "2020-01-21"
+        },
+        "irradiance_site_id": 89627
+    },
+    {
+        "id": 477834,
+        "name": "Anon",
+        "accountId": 53921,
+        "status": "Active",
+        "peakPower": 4.48,
+        "lastUpdateTime": "2020-01-21",
+        "installationDate": "2017-05-17",
+        "ptoDate": null,
+        "notes": "",
+        "type": "Optimizers & Inverters",
+        "location": {
+            "country": "United States",
+            "state": "Anon",
+            "city": "Anon",
+            "address": "Anon",
+            "address2": "",
+            "zip": "Anon",
+            "timeZone": "America/Denver",
+            "countryCode": "US",
+            "stateCode": "UT",
+            "lat": 40.2463234,
+            "long": -111.70303290000001
+        },
+        "alertQuantity": 1,
+        "alertSeverity": "HIGH",
+        "primaryModule": {
+            "manufacturerName": "LG",
+            "modelName": "LG315N1C-G4",
+            "maximumPower": 315.0
+        },
+        "time_interval": {
+            "startDate": "2017-03-09",
+            "endDate": "2020-01-21"
+        },
+        "irradiance_site_id": 151965
+    },
+    {
+        "id": 641826,
+        "name": "Anon",
+        "accountId": 53921,
+        "status": "Active",
+        "peakPower": 30.0,
+        "lastUpdateTime": "2020-01-21",
+        "installationDate": "2018-02-08",
+        "ptoDate": null,
+        "notes": "",
+        "type": "Optimizers & Inverters",
+        "location": {
+            "country": "United States",
+            "state": "Anon",
+            "city": "Anon",
+            "address": "Anon",
+            "address2": "",
+            "zip": "Anon",
+            "timeZone": "America/Denver",
+            "countryCode": "US",
+            "stateCode": "UT",
+            "lat": 37.05509869999999,
+            "long": -112.52786
+        },
+        "alertQuantity": 0,
+        "primaryModule": {
+            "manufacturerName": "Hanwha",
+            "modelName": "Hanwha Q-Cells",
+            "maximumPower": 295.0
+        },
+        "time_interval": {
+            "startDate": "2018-02-09",
+            "endDate": "2020-01-21"
+        },
+        "irradiance_site_id": 114696
+    },
+    {
+        "id": 896164,
+        "name": "Anon",
+        "accountId": 53921,
+        "status": "Active",
+        "peakPower": 8.235,
+        "lastUpdateTime": "2020-01-21",
+        "installationDate": "2018-11-05",
+        "ptoDate": null,
+        "notes": "",
+        "type": "Optimizers & Inverters",
+        "location": {
+            "country": "United States",
+            "state": "Anon",
+            "city": "Anon",
+            "address": "Anon",
+            "address2": "",
+            "zip": "Anon",
+            "timeZone": "America/Los_Angeles",
+            "countryCode": "US",
+            "stateCode": "CA",
+            "lat": 33.704533399999995,
+            "long": -118.0291067
+        },
+        "alertQuantity": 0,
+        "primaryModule": {
+            "manufacturerName": "Canadian Solar",
+            "modelName": "CF6k-305 MS",
+            "maximumPower": 320.0
+        },
+        "time_interval": {
+            "startDate": "2018-11-06",
+            "endDate": "2020-01-21"
+        },
+        "irradiance_site_id": 80122
+    },
+    {
+        "id": 717193,
+        "name": "Anon",
+        "accountId": 53921,
+        "status": "Active",
+        "peakPower": 54.0,
+        "lastUpdateTime": "2020-01-21",
+        "currency": "USD",
+        "installationDate": "2017-12-01",
+        "ptoDate": null,
+        "notes": "",
+        "type": "Optimizers & Inverters",
+        "location": {
+            "country": "United States",
+            "state": "Anon",
+            "city": "Anon",
+            "address": "Anon",
+            "address2": "",
+            "zip": "Anon",
+            "timeZone": "America/Phoenix",
+            "countryCode": "US",
+            "stateCode": "AZ",
+            "lat": 36.95268069999999,
+            "long": -112.9597072
+        },
+        "alertQuantity": 0,
+        "primaryModule": {
+            "manufacturerName": "Hanwha Q-Cells",
+            "modelName": "L-G5 340",
+            "maximumPower": 340.0,
+            "temperatureCoef": -0.4
+        },
+        "time_interval": {
+            "startDate": "2018-04-21",
+            "endDate": "2020-01-21"
+        },
+        "irradiance_site_id": 113806
+    },
+    {
+        "id": 627759,
+        "name": "Anon",
+        "accountId": 53921,
+        "status": "Active",
+        "peakPower": 18.0,
+        "lastUpdateTime": "2020-01-21",
+        "currency": "USD",
+        "installationDate": "2018-01-01",
+        "ptoDate": null,
+        "notes": "",
+        "type": "Optimizers & Inverters",
+        "location": {
+            "country": "United States",
+            "state": "Anon",
+            "city": "Anon",
+            "address": "Anon",
+            "address2": "",
+            "zip": "Anon",
+            "timeZone": "America/Phoenix",
+            "countryCode": "US",
+            "stateCode": "AZ",
+            "lat": 36.958596,
+            "long": -112.98454709999999
+        },
+        "alertQuantity": 0,
+        "primaryModule": {
+            "manufacturerName": "LG",
+            "modelName": "300N1C",
+            "maximumPower": 300.0,
+            "temperatureCoef": -0.31
+        },
+        "time_interval": {
+            "startDate": "2018-01-17",
+            "endDate": "2020-01-21"
+        },
+        "irradiance_site_id": 113805
+    },
+    {
+        "id": 569932,
+        "name": "Anon",
+        "accountId": 53921,
+        "status": "Active",
+        "peakPower": 24.0,
+        "lastUpdateTime": "2020-01-21",
+        "installationDate": "2017-10-23",
+        "ptoDate": null,
+        "notes": "",
+        "type": "Optimizers & Inverters",
+        "location": {
+            "country": "United States",
+            "state": "Anon",
+            "city": "Anon",
+            "address": "Anon",
+            "address2": "",
+            "zip": "Anon",
+            "timeZone": "America/Denver",
+            "countryCode": "US",
+            "stateCode": "UT",
+            "lat": 37.17510499999999,
+            "long": -113.382926
+        },
+        "alertQuantity": 0,
+        "primaryModule": {
+            "manufacturerName": "Hanwha Q-Cells",
+            "modelName": " L-G4.2 330",
+            "maximumPower": 330.0,
+            "temperatureCoef": -29.0
+        },
+        "time_interval": {
+            "startDate": "2017-10-23",
+            "endDate": "2020-01-21"
+        },
+        "irradiance_site_id": 115995
+    },
+    {
+        "id": 466851,
+        "name": "Anon",
+        "accountId": 53921,
+        "status": "Active",
+        "peakPower": 9.6,
+        "lastUpdateTime": "2020-01-21",
+        "installationDate": "2017-05-17",
+        "ptoDate": null,
+        "notes": "",
+        "type": "Optimizers & Inverters",
+        "location": {
+            "country": "United States",
+            "state": "Anon",
+            "city": "Anon",
+            "address": "Anon",
+            "address2": "",
+            "zip": "Anon",
+            "timeZone": "America/Denver",
+            "countryCode": "US",
+            "stateCode": "UT",
+            "lat": 40.710912,
+            "long": -111.962157
+        },
+        "alertQuantity": 0,
+        "primaryModule": {
+            "manufacturerName": "LG",
+            "modelName": "Neon2 320W",
+            "maximumPower": 320.0
+        },
+        "time_interval": {
+            "startDate": "2017-02-24",
+            "endDate": "2020-01-21"
+        },
+        "irradiance_site_id": 157836
+    },
+    {
+        "id": 256177,
+        "name": "Anon",
+        "accountId": 53921,
+        "status": "Active",
+        "peakPower": 25.0,
+        "lastUpdateTime": "2020-01-21",
+        "installationDate": "2016-05-20",
+        "ptoDate": null,
+        "notes": "",
+        "type": "Optimizers & Inverters",
+        "location": {
+            "country": "United States",
+            "state": "Anon",
+            "city": "Anon",
+            "address": "Anon",
+            "address2": "",
+            "zip": "Anon",
+            "timeZone": "America/Phoenix",
+            "countryCode": "US",
+            "stateCode": "AZ",
+            "lat": 36.9591277,
+            "long": -112.98887739999999
+        },
+        "alertQuantity": 0,
+        "primaryModule": {
+            "manufacturerName": "LG",
+            "modelName": "275w mono",
+            "maximumPower": 275.0
+        },
+        "time_interval": {
+            "startDate": "2016-05-16",
+            "endDate": "2020-01-21"
+        },
+        "irradiance_site_id": 113805
+    },
+    {
+        "id": 505347,
+        "name": "Anon",
+        "accountId": 53921,
+        "status": "Active",
+        "peakPower": 60.0,
+        "lastUpdateTime": "2019-10-02",
+        "installationDate": "2017-07-20",
+        "ptoDate": null,
+        "notes": "",
+        "type": "Optimizers & Inverters",
+        "location": {
+            "country": "United States",
+            "state": "Anon",
+            "city": "Anon",
+            "address": "Anon",
+            "address2": "",
+            "zip": "Anon",
+            "timeZone": "America/Phoenix",
+            "countryCode": "US",
+            "stateCode": "AZ",
+            "lat": 36.952701,
+            "long": -112.99262320000001
+        },
+        "alertQuantity": 1,
+        "alertSeverity": "INFO",
+        "primaryModule": {
+            "manufacturerName": "Hanwha Q-Cells",
+            "modelName": " L-G4.2 330",
+            "maximumPower": 330.0,
+            "temperatureCoef": -29.0
+        },
+        "time_interval": {
+            "startDate": "2017-06-08",
+            "endDate": "2019-10-02"
+        },
+        "irradiance_site_id": 113805
+    }
+]
