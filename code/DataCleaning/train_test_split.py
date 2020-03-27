@@ -4,15 +4,18 @@ import datetime
 # split across days for
 
 DATA_DIR = "../../data/production_data"
+DATA_DIR_I = "../../data/irradiance_data"
 
 
 def get_day(reader, start_row):
     start_date = to_date_time(start_row[0])
+    start_row[0] = start_date
     rows = [start_row]
 
     end_row = None
     for row in reader:
         date = to_date_time(row[0])
+        row[0] = date
         if date.day > start_date.day or \
                 date.month > start_date.month or \
                 date.year > start_date.year:
@@ -27,11 +30,15 @@ def get_day(reader, start_row):
 
 def to_date_time(date_str):
     # Timezone string is non-standard, strip it off
-    date_str = date_str = date_str[:-6]
-    date_time = datetime.datetime.strptime(
-        date_str, "%Y-%m-%d %H:%M:%S")
-
-    return date_time
+    if type(date_str) == str:
+        date_str = date_str = date_str[:-6]
+        date_time = datetime.datetime.strptime(
+            date_str, "%Y-%m-%d %H:%M:%S")
+        return date_time
+    elif type(date_str) == datetime.datetime:
+        return date_str
+    else:
+        return None
 
 
 def train_test_split_rows(window_rows, train_number, test_number):
@@ -87,7 +94,7 @@ def split(file, window_size, train_number, test_number):
         for day_rows in window_days:
             train_rows.extend(day_rows)
 
-    return train_rows, test_rows
+    return train_rows, test_rows, title_row
 
 
 def get_category_map(row_lists, idx=4):
@@ -107,14 +114,15 @@ def get_category_map(row_lists, idx=4):
     return category_map
 
 
-def to_vector(row_lists):
+def to_vector(row_lists, title_row):
 
-    categorical_rows = set([4])
+    title_to_index = {title: i for i, title in enumerate(title_row)}
+
+    categorical_rows = set([title_to_index["precipType"]])
     category_maps = {}
     for categorical_row_idx in categorical_rows:
         category_maps[categorical_row_idx] = get_category_map(
             row_lists, categorical_row_idx)
-    print(category_maps)
 
     feature_matrices = []
     target_vectors = []
@@ -124,20 +132,22 @@ def to_vector(row_lists):
         targets = []
 
         for row in row_list:
-            target = row[-1]
+            target = row[title_to_index["production"]]
             try:
                 target_float = float(target)
             except:
                 continue
-            else:    
+            else:
                 if target_float == 0.0:
-                    # print("Skipping target")
                     continue
                 targets.append(target_float)
 
             feature_list = []
             # Skip the date and production columns
-            for feature_idx in range(1, len(row)-1):
+            for feature_idx in range(len(row)):
+
+                if feature_idx == title_to_index["date"] or feature_idx == title_to_index["production"]:
+                    continue
 
                 feature_val = row[feature_idx]
 
@@ -164,8 +174,88 @@ def to_vector(row_lists):
     return feature_matrices, target_vectors
 
 
+def parse_irrediance_row(row, title_to_index, tz_offset):
+
+    ghi = float(row[title_to_index["GHI"]])
+    dhi = float(row[title_to_index["DHI"]])
+    dni = float(row[title_to_index["DNI"]])
+
+    year = int(row[title_to_index["Year"]])
+    month = int(row[title_to_index["Month"]])
+    day = int(row[title_to_index["Day"]])
+    hour = int(row[title_to_index["Hour"]])
+    minute = int(row[title_to_index["Minute"]])
+
+    # Something here to fix time?
+    time = datetime.datetime(year, month, day, hour, minute)
+    tz_delta = datetime.timedelta(hours=abs(tz_offset))
+    time = time - tz_delta
+
+    return [time, ghi, dhi, dni]
+
+
+def load_irrediance_data(file, tz_offset=7):
+    with open(file) as csvfile:
+        reader = csv.reader(csvfile)
+        title_row = next(reader)
+        title_to_index = {title: i for i, title in enumerate(title_row)}
+
+        parsed_rows = []
+        for row_1 in reader:
+            row_2 = next(reader)  # Get in twos and average
+
+            parsed_row_1 = parse_irrediance_row(
+                row_1, title_to_index, tz_offset)
+
+            parsed_row_2 = parse_irrediance_row(
+                row_2, title_to_index, tz_offset)
+
+            t1 = parsed_row_1[0]
+            t2 = parsed_row_2[0]
+
+            assert(t1.hour == t2.hour)
+
+            ghi = (parsed_row_1[1] + parsed_row_2[1]) / 2
+            dhi = (parsed_row_1[2] + parsed_row_2[2]) / 2
+            dni = (parsed_row_1[3] + parsed_row_2[3]) / 2
+            parsed_rows.append([t1, ghi, dhi, dni])
+
+    return parsed_rows, ["date", "GHI", "DHI", "DNI"]
+
+
+def join_title_rows(prod_title_row, irr_title_row):
+    assert(prod_title_row[0] == "date")
+    assert(irr_title_row[0] == "date")
+
+    return prod_title_row + irr_title_row[1:]
+
+
+def join_irradiance_data(production_rows, irradiance_rows):
+
+    joined_rows = []
+
+    p_start = 0
+    for r in irradiance_rows:
+        r_date = r[0]
+        for i in range(p_start, len(production_rows)):
+            p = production_rows[i]
+            if r_date == p[0]:
+                p_start = i  # Use the fact that these are in sorted order
+                joined_rows.append(p + r[1:])
+                break
+
+    return joined_rows
+
+
 # file = f"{DATA_DIR}/103941/combination_data/production_weather_combination.csv"
+# file_i = f"{DATA_DIR_I}/113805/irradiance_data.csv"
 
-# train, test = split(file, 3, 2, 1)
+# train, test, prod_title_row = split(file, 3, 2, 1)
+# irradiance_rows, irr_title_row = load_irrediance_data(file_i, 7)
 
-# [X_train, X_test], [Y_train, Y_test] = to_vector([train, test])
+# train_joined = join_irradiance_data(train, irradiance_rows)
+# test_joined = join_irradiance_data(test, irradiance_rows)
+# joined_title_rows = join_title_rows(prod_title_row, irr_title_row)
+
+# [X_train, X_test], [Y_train, Y_test] = to_vector(
+#     [train_joined, test_joined], joined_title_rows)
