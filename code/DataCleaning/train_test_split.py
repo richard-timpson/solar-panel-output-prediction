@@ -247,6 +247,25 @@ def join_irradiance_data(production_rows, irradiance_rows):
     return joined_rows
 
 
+def get_irradiance_WPI_data(file_production, file_irradiance, window_size, train_rows, tz_str):
+    tz_strs = {"America/Denver": 7,
+               "America/Los_Angeles": 8, "America/Phoenix": 7}
+
+    test_rows = window_size - train_rows
+
+    train, test, prod_title_row = split(
+        file_production, window_size, train_rows, test_rows)
+    irradiance_rows, irr_title_row = load_irrediance_data(
+        file_irradiance, tz_strs[tz_str])
+
+    train_joined = join_irradiance_data(train, irradiance_rows)
+    test_joined = join_irradiance_data(test, irradiance_rows)
+    joined_title_rows = join_title_rows(prod_title_row, irr_title_row)
+
+    X, Y = to_vector([train_joined, test_joined], joined_title_rows)
+
+    return X, Y
+
 # file = f"{DATA_DIR}/103941/combination_data/production_weather_combination.csv"
 # file_i = f"{DATA_DIR_I}/113805/irradiance_data.csv"
 
