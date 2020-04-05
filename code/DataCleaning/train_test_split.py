@@ -1,6 +1,7 @@
 import numpy as np
 import csv
 import datetime
+from calendar import isleap
 # split across days for
 
 DATA_DIR = "../../data/production_data"
@@ -97,6 +98,20 @@ def split(file, window_size, train_number, test_number):
     return train_rows, test_rows, title_row
 
 
+def date_to_feature(date: datetime.datetime):
+    day_of_year = date.timetuple().tm_yday
+    if isleap(date.year):
+        days_in_year = 366
+    else:
+        days_in_year = 365
+
+    # Use a perioidic function
+    day = 1 + np.sin(day_of_year*np.pi / days_in_year)
+    hour = 1 + np.sin(date.hour*np.pi / 24)
+
+    return day, hour
+
+
 def get_category_map(row_lists, idx=4):
 
     category_map = {}
@@ -112,6 +127,30 @@ def get_category_map(row_lists, idx=4):
                 next_idx += 1
 
     return category_map
+
+
+def build_vector_title_row(title_row, category_maps):
+    new_titles = []
+
+    for title_idx, title in enumerate(title_row):
+
+        if title == "production":
+            continue
+
+        elif title == "date":
+            new_titles.append("day")
+            new_titles.append("hour")
+
+        elif title_idx in category_maps:
+            category_map = category_maps[title_idx]
+            l = [""] * len(category_map)
+            for cat_name, name_idx in category_map.items():
+                l[name_idx] = f"{title}_{cat_name}"
+            new_titles.extend(l)
+        else:
+            new_titles.append(title)
+
+    return new_titles
 
 
 def to_vector(row_lists, title_row):
@@ -146,12 +185,15 @@ def to_vector(row_lists, title_row):
             # Skip the date and production columns
             for feature_idx in range(len(row)):
 
-                if feature_idx == title_to_index["date"] or feature_idx == title_to_index["production"]:
-                    continue
-
                 feature_val = row[feature_idx]
+                if feature_idx == title_to_index["production"]:
+                    continue
+                elif feature_idx == title_to_index["date"]:
+                    day, hour = date_to_feature(row[feature_idx])
+                    feature_list.append(day)
+                    feature_list.append(hour)
 
-                if feature_idx in categorical_rows:  # categorical feature
+                elif feature_idx in categorical_rows:  # categorical feature
                     category_map = category_maps[feature_idx]
                     l = [0] * len(category_map)
                     l[category_map[feature_val]] = 1
@@ -168,10 +210,13 @@ def to_vector(row_lists, title_row):
         target_vectors.append(np.array(targets))
 
     # Some sanity checks:
+    new_title_row = build_vector_title_row(title_row, category_maps)
+
     assert(feature_matrices[0].shape[0] == len(target_vectors[0]))
     assert(feature_matrices[0].shape[1] == feature_matrices[1].shape[1])
+    assert(len(new_title_row) == feature_matrices[0].shape[1])
 
-    return feature_matrices, target_vectors
+    return feature_matrices, target_vectors, new_title_row
 
 
 def parse_irrediance_row(row, title_to_index, tz_offset):
@@ -247,6 +292,18 @@ def join_irradiance_data(production_rows, irradiance_rows):
     return joined_rows
 
 
+def get_production_data(file, window_size, train_rows):
+    test_rows = window_size - train_rows
+
+    train, test, prod_title_row = split(
+        file, window_size, train_rows, test_rows)
+
+    X, Y, new_title_row = to_vector(
+        [train, test], prod_title_row)
+
+    return X, Y, new_title_row
+
+
 def get_irradiance_WPI_data(file_production, file_irradiance, window_size, train_rows, tz_str):
     tz_strs = {"America/Denver": 7,
                "America/Los_Angeles": 8, "America/Phoenix": 7}
@@ -262,19 +319,43 @@ def get_irradiance_WPI_data(file_production, file_irradiance, window_size, train
     test_joined = join_irradiance_data(test, irradiance_rows)
     joined_title_rows = join_title_rows(prod_title_row, irr_title_row)
 
-    X, Y = to_vector([train_joined, test_joined], joined_title_rows)
+    X, Y, new_title_row = to_vector(
+        [train_joined, test_joined], joined_title_rows)
 
-    return X, Y
+    return X, Y, new_title_row
 
-# file = f"{DATA_DIR}/103941/combination_data/production_weather_combination.csv"
-# file_i = f"{DATA_DIR_I}/113805/irradiance_data.csv"
 
-# train, test, prod_title_row = split(file, 3, 2, 1)
-# irradiance_rows, irr_title_row = load_irrediance_data(file_i, 7)
+def keep_columns(X, title_row, columns):
+    # Remove all columns except for the given list of columns to keep
+    columns = set(columns)
 
-# train_joined = join_irradiance_data(train, irradiance_rows)
-# test_joined = join_irradiance_data(test, irradiance_rows)
-# joined_title_rows = join_title_rows(prod_title_row, irr_title_row)
+    assert(X.shape[1] == len(title_row))
 
-# [X_train, X_test], [Y_train, Y_test] = to_vector(
-#     [train_joined, test_joined], joined_title_rows)
+    new_title_row = []
+    to_remove = []
+    for i, title in enumerate(title_row):
+        if title in columns:
+            new_title_row.append(title)
+        else:
+            to_remove.append(i)
+
+    X_new = np.delete(X, to_remove, 1)
+    return X_new, new_title_row
+
+
+def remove_columns(X, title_row, columns):
+    # Remove columns given a (textual) list of columns to delete
+    columns = set(columns)
+
+    assert(X.shape[1] == len(title_row))
+
+    new_title_row = []
+    to_remove = []
+    for i, title in enumerate(title_row):
+        if title in columns:
+            to_remove.append(i)
+        else:
+            new_title_row.append(title)
+
+    X_new = np.delete(X, to_remove, 1)
+    return X_new, new_title_row
