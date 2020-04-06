@@ -2,6 +2,7 @@ import numpy as np
 import csv
 import datetime
 from calendar import isleap
+import json
 # split across days for
 
 DATA_DIR = "../../data/production_data"
@@ -98,6 +99,37 @@ def split(file, window_size, train_number, test_number):
     return train_rows, test_rows, title_row
 
 
+def get_total_area(architecture_file):
+    sites = {}
+
+    with open(architecture_file) as f:
+        rows = csv.reader(f)
+        title_row = {s: i for i, s in enumerate(next(rows))}
+
+        for row in rows:
+            area = float(row[title_row["width"]]) * \
+                float(row[title_row["height"]])
+            area /= (100*100)  # To keep the numbers from getting too big
+
+            site_id = row[title_row["site_id"]]
+            if site_id in sites:
+                sites[site_id] += area
+            else:
+                sites[site_id] = area
+
+    return sites
+
+
+def append_site_features(X, features):
+    # Append the given features to the array of training examples
+    # All training examples will be give the same value for the feature
+    x_a = np.zeros((X.shape[0], len(features)))
+    for i in range(len(features)):
+        x_a[:, i] = features[i]
+
+    return np.hstack([X, x_a])
+
+
 def date_to_feature(date: datetime.datetime):
     day_of_year = date.timetuple().tm_yday
     if isleap(date.year):
@@ -160,8 +192,10 @@ def to_vector(row_lists, title_row):
     categorical_rows = set([title_to_index["precipType"]])
     category_maps = {}
     for categorical_row_idx in categorical_rows:
-        category_maps[categorical_row_idx] = get_category_map(
-            row_lists, categorical_row_idx)
+        # category_maps[categorical_row_idx] = get_category_map(
+        #     row_lists, categorical_row_idx)
+        category_maps[categorical_row_idx] = {
+            "": 0, "rain": 1, "snow": 2, "sleet": 3}  # Standardize across all the sites
 
     feature_matrices = []
     target_vectors = []
