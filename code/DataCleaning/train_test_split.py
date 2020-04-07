@@ -111,7 +111,7 @@ def get_total_area(architecture_file):
                 float(row[title_row["height"]])
             area /= (100*100)  # To keep the numbers from getting too big
 
-            site_id = row[title_row["site_id"]]
+            site_id = int(row[title_row["site_id"]])
             if site_id in sites:
                 sites[site_id] += area
             else:
