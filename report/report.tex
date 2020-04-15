@@ -69,7 +69,7 @@ The various data sources we gathered provided data in different time intervals. 
 
 \subsection{Feature Representation}
 
-Each training example, $x_i$ can be further broken down into features based on their data source. For our purposes, we will look at $IR_i,W_i,$and $T_i$ which denote Irradiance, Weather and Time respectively. For a given train example, $x_i=IR_i+W_i+T_i$ where ``+'' denotes vector concatenation. Irradiance consists of three different measures, Direct Normal Irradiance (DHI), Diffuse Horizontal Irradiance (DHI), and Global Horizontal Irradiance (GHI) \cite{irradiance}. Temporal values include both the time time of day and day of the year. These were then transformed using the nonlinear transformation $1 + sin( \pi t / \tau )$ where $\tau=24$ for hours of the day and $\tau=365$(or $366$) for day of the year. Weather consists of 16 values, some of which are real valued like temperature and precipitation intensity and some which are one-hot encoded categorical variables like precipitation type. See \cite{DarkSky} for the full weather feature set.
+Each training example, $x_i$ can be further broken down into features based on their data source. For our purposes, we will look at $IR_i,W_i,$and $T_i$ which denote Irradiance, Weather and Time respectively. A given train example, $x_i$ will consist of combinations of $IR_i, W_i, T_i$. Irradiance consists of three different measures, Direct Normal Irradiance (DHI), Diffuse Horizontal Irradiance (DHI), and Global Horizontal Irradiance (GHI) \cite{irradiance}. Temporal values include both the time time of day and day of the year. These were then transformed using the nonlinear transformation $1 + sin( \pi t / \tau )$ where $\tau=24$ for hours of the day and $\tau=365$(or $366$) for day of the year. Weather consists of 16 values, some of which are real valued like temperature and precipitation intensity and some which are one-hot encoded categorical variables like precipitation type. See \cite{DarkSky} for the full weather feature set.
 
 \subsection{Cross Validation}
 
@@ -78,7 +78,11 @@ Instead of splitting the data by sampling each hourly training point independent
 \subsection{Site Specific Models}
 
 The first set of linear models were intended to test the adequacy of specific classes of features for predicting production at a specific site. Thus, we created 13 sets of models, $M^s$ for the 13 separate sites using only $X^s$,$Y^s$. This allowed us to sidestep the ways in which sites might differ from one another and focus only on which variables were useful for predicting solar production. It also served as a baseline which we could compare to transfer learning approaches.
-Within each site, we built individual models trained on each combination of feature subsets $\chi_f^s \in \left\{ IR^s,IR^s + T^s, IR^s + W^s, W^s,W^s + T^s, all \right\}$ where ``all'' denotes $IR^s+W^s+T^s$. 
+Within each site, we built individual models trained on each combination of feature subsets
+\[
+    \chi_f^s \in \left\{ IR^s,IR^s + T^s, IR^s + W^s, W^s,W^s + T^s, all \right\}
+\] 
+where ``all'' denotes $IR^s+W^s+T^s$ and ``$+$'' is used to refer to vector concatenation. 
 
 Within a single site, the performance of each model, $M_f^s$ trained on $\chi_f^s$, can be evaluated to give the relative importance of each feature combination.
 
