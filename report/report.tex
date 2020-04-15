@@ -9,6 +9,13 @@
 \usepackage{placeins}
 \usepackage{url}
 
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
 \title{Residential Solar Forecasting}
 \author{Roman Amici, Richard Timpson}
 
@@ -29,7 +36,7 @@ We believe each of these goals were met although with certain caveats surroundin
 \section{Data}
 
 \subsection{Solar PV Energy Production}
-The core of our data is centered around energy production data of several different solar photovoltaic panel systems. The data was accessed through a proprietary source so much cannot be said about the production data other than it contains time series data at 15 minute increments for 14 different systems. Some of the systems are built for the rooftop of residential homes and others are for large scale commercial architectures.The range of the data goes back as far as five years for some homes to less than one year for others. Given that the goal of the project is to build a regression model to predict the energy output, the diversity in data lends itself to a higher degree of confidence in the results of a more general model that could be used in a production level software system for any given system with a varying amount of data. The following figure shows this diversity in the data set. 
+The core of our data is centered around energy production data of several different solar photovoltaic panel systems. The data was accessed through a proprietary source so much cannot be said about the production data other than it contains time series data at 15 minute increments for 14 different systems. Some of the systems are built for the rooftop of residential homes and others are for large scale commercial architectures.The range of the data goes back as far as five years for some homes to less than one year for others. Given that the goal of the project is to build a regression model to predict the energy output, the diversity in data lends itself to a higher degree of confidence in the results of a more general model that could be used in a production level software system for any given system with a varying amount of data. Figure \ref{2-1} shows this diversity in the data set. 
 
 \begin{figure}[!htb]
     \includegraphics[width=\textwidth]{2-1}
@@ -62,7 +69,7 @@ The various data sources we gathered provided data in different time intervals. 
 
 \subsection{Feature Representation}
 
-Each training example, $x_i$ can be further broken down into features based on their data source. For our purposes, we will look at $IR_i,W_i,$and $T_i$ which denote Irradiance, Weather and Time respectively. For a given train example, $x_i=IR_i+W_i+T_i$ where ``+'' denotes vector concatenation. Irradiance consists of three different measures, Direct Normal Irradiance (DHI), Diffuse Horizontal Irradiance (DHI), and Global Horizontal Irradiance (GHI). See (\href{http://www.geo.hunter.cuny.edu/terrain/solar.html}{source}) for more information. Temporal values include both the time time of day and day of the year. These were then transformed using the nonlinear transformation $1 + sin( \pi t / \tau )$ where $\tau=24$ for hours of the day and $\tau=365$(or $366$) for day of the year. Weather consists of 16 values, some of which are real valued like temperature and precipitation intensity and some which are one-hot encoded categorical variables like precipitation type. See \href{https://darksky.net/dev/docs}{DarkSKY} for the full weather feature set.
+Each training example, $x_i$ can be further broken down into features based on their data source. For our purposes, we will look at $IR_i,W_i,$and $T_i$ which denote Irradiance, Weather and Time respectively. For a given train example, $x_i=IR_i+W_i+T_i$ where ``+'' denotes vector concatenation. Irradiance consists of three different measures, Direct Normal Irradiance (DHI), Diffuse Horizontal Irradiance (DHI), and Global Horizontal Irradiance (GHI). See \href{http://www.geo.hunter.cuny.edu/terrain/solar.html}{(source)} for more information. Temporal values include both the time time of day and day of the year. These were then transformed using the nonlinear transformation $1 + sin( \pi t / \tau )$ where $\tau=24$ for hours of the day and $\tau=365$(or $366$) for day of the year. Weather consists of 16 values, some of which are real valued like temperature and precipitation intensity and some which are one-hot encoded categorical variables like precipitation type. See \href{https://darksky.net/dev/docs}{DarkSKY} for the full weather feature set.
 
 \subsection{Cross Validation}
 
@@ -87,7 +94,7 @@ Applying transfer learning without further modification should simply fail for t
 
 The results from the several models we built indicate that the most important data involved in predicting the energy output was solar irradiance and that the model works best when building site specific models. For some of the sites irradiance and time together was sufficient to build close to an optimal model for that site, and for all sites the combination of weather with irradiance seems to be the most important factor in building an accurate model. The transfer learning models were significantly worse than the site specific models.
 
-The metric that we are using to evaluate the model is the root mean-squared-error (RMSE),which is one of the standard metrics used to evaluate regression models. RMSE simply takes the square root of the mean squared error and provides a more interpretable metric for comparison across models.
+The metric that we are using to evaluate the model is the root mean squared error (RMSE),which is one of the standard metrics used to evaluate regression models. RMSE simply takes the square root of the mean squared error and provides a more interpretable metric for comparison across models.
 
 \subsection{Site Specific Results}
 
@@ -99,7 +106,7 @@ Because there are a significant number of different models we are comparing we a
     \caption{RMSE for each feature combination across four different sites.}
 \end{figure}
 
-As the graphs in figure \ref{4-1} indicate, weather only is typically the worst performing model. Adding irradiance and temporal variables increases the performance to varying degrees, and having all of them together is consistently the best model.
+As the graphs in Figure \ref{4-1} indicate, weather only is typically the worst performing model. Adding irradiance and temporal variables increases the performance to varying degrees, and having all of them together is consistently the best model.
 
 To demonstrate a trend amongst all models for all systems, we compare each model to the worst performing model and average those results across all different systems. The worst performing model, on average, is weather only. Here we will define a global model set $$\mathbb{M} = \left\{ M_{IR}, M_{IR+T}, M_{W}, M_{W+T}, M_{W+IR}, M_{all}, M_{Z}, M_{Int} \right\}$$ which represents an aggregate of the different model error results across the different systems. Then 
 \[
@@ -113,7 +120,7 @@ To demonstrate a trend amongst all models for all systems, we compare each model
     \label{4-2}
 \end{figure}
 
-As figure \ref{4-2} shows, we see over a 30\% average increase in RMSE when combining all models together. Irradiance alone performs better than weather, and the combination of weather and irradiance almost performs well as well as weather, irradiance, and time together.
+As Figure \ref{4-2} shows, we see over a 30\% average increase in RMSE when combining all models together. Irradiance alone performs better than weather, and the combination of weather and irradiance almost performs well as well as weather, irradiance, and time together.
 
 \subsection{Transfer Learning}
 
@@ -134,7 +141,7 @@ Our first goal was to build a model which could serve as a baseline for future c
 
 We must, however, be realistic about what this baseline represents. As we have already noted, we used historical weather observations rather than weather forecasts. This thus uses information which would be strictly more accurate than that available in a production system. We should be clear that this represents a sort of “best case scenario” when it comes to using weather variables. We would expect the performance to degrade if we switched to using forecasts instead, since forecasts can obviously be inaccurate. The performance should only degrade past a certain point as it would not be any worse than if we simply removed the weather data from the model entirely. This corresponds to the feature subset case T + IR which still provides competitive performance.
 
-It is hardly surprising, given that solar irradiance is actually a measure of theoretical energy from the sun, that irradiance would be highly predictive of PV output. It is still unclear, however, why there is such a large difference in this impact between the sites (TODO: see relevant figure). We hypothesize that it might have to do with the precision of the irradiance measurements at various sites. For irradiance, as for weather, we had to pull data from the external source nearest to our site. This means that the data gathered for each site might differ from the true data at that site (if we could somehow measure it) by varying degrees. If this were the case, then it might explain why irradiance would be less predictive for some sites rather than others. This is a direction we would like to pursue further if time allowed.
+It is hardly surprising, given that solar irradiance is actually a measure of theoretical energy from the sun, that irradiance would be highly predictive of PV output. It is still unclear, however, why there is such a large difference in this impact between the sites (see Figure \ref{4-1}). We hypothesize that it might have to do with the precision of the irradiance measurements at various sites. For irradiance, as for weather, we had to pull data from the external source nearest to our site. This means that the data gathered for each site might differ from the true data at that site (if we could somehow measure it) by varying degrees. If this were the case, then it might explain why irradiance would be less predictive for some sites rather than others. This is a direction we would like to pursue further if time allowed.
 
 Transfer learning, in both the integrated and one-shot cases performed much worse than the individualized models. It appears that sites are too dissimilar to see any gains from transfer learning. The most likely possible explanation is that the sites themselves are so different (both in terms of time and in scale) that data from one is not relevant to another. We were only able to integrate one feature from the sites’ configuration (PV area) into the model. There are additional features we could have added such as panel tilt and azimuth but this is difficult to represent because not all panels in a given system are homogenous. This would require a more complex model which could deal with the dynamic sizing of the systems  and was outside of the scope of this project.
     
