@@ -7,6 +7,7 @@
 \usepackage{hyperref}
 \usepackage{amssymb}
 \usepackage{placeins}
+\usepackage{url}
 
 \title{Residential Solar Forecasting}
 \author{Roman Amici, Richard Timpson}
@@ -17,7 +18,7 @@
 
 \section{Introduction}
 
-Our project investigated the feasibility of predicting Photovoltaic (PV) energy production in residential solar systems. Residential PV forecasting has previously been limited to apriori models which forecast theoretical average yearly production over the entire lifetime of a system or location. \href{https://sam.nrel.gov/photovoltaic.html}{source}. We wanted to assess whether, given weather data, solar irradiance measurements, information about a solar site’s architecture, and hourly measurements of PV production, we could construct a machine learning based model which could accurately forecast energy production at a granular time scale (hour or day) for a specific residential system as an alternative to using the existing apriori models.
+Our project investigated the feasibility of predicting Photovoltaic (PV) energy production in residential solar systems. Residential PV forecasting has typically been limited to apriori models which forecast theoretical average yearly production over the entire lifetime of a system or location. \cite{SAM}. We wanted to assess whether, given weather data, solar irradiance measurements, information about a solar site’s architecture, and hourly measurements of PV production, we could construct a machine learning based model which could accurately forecast energy production at a granular time scale (hour or day) for a specific residential system as an alternative to using the existing apriori models.
 
 A production forecasting system at a granular time scale can be useful for smart home and energy applications on both an individual level and global level. Solar energy is becoming more feasible as an alternative to traditional grid tied power systems, but is still limited by its reliance on power production during a limited time frame. Accurately forecasting the production during that time can enable smart grids and individual PV systems to optimize both power usage and power storage. 
 
@@ -37,7 +38,7 @@ The core of our data is centered around energy production data of several differ
 \end{figure}
 
 \subsection{Weather Data}
-The initial data that was used to build a model was historical weather data pulled for each of the locations of the different systems. Because the data is proprietary no information can be given about the exact locations, but they are all roughly in the southwestern United States. \href{https://darksky.net/dev/docs}{DarkSky} provides an api that gives free access to historical weather data at any location in the United States. We were able to pull the weather data in one hour increments for each location for the entire time period of available production data.
+The initial data that was used to build a model was historical weather data pulled for each of the locations of the different systems. Because the data is proprietary no information can be given about the exact locations, but they are all roughly in the southwestern United States. DarkSky \cite{DarkSky} provides an api that gives free access to historical weather data at any location in the United States. We were able to pull the weather data in one hour increments for each location for the entire time period of available production data.
 
 There is one fundamental flaw in this data that we could not solve. For a model whose purpose is to predict the future production of a given system, “historical” weather data does not exist. If weather data were to be used for such a model it would be forecasted weather and not weather that was observed. After many hours spent searching we could never find a data source that provided open access to historical weather forecasts – the data that we collected is weather that was actually observed. With the understanding that the data is flawed in this way, we decided to move forward with the data as a proxy for a weather forecast. Although we did not do so, it would have been appropriate to do further research into the difference in accuracy between weather forecasts and observations, as it would in some way inform us about possible errors in our model. Our underlying assumption with the weather data was that it would be close enough to be reliable. 
 
@@ -45,7 +46,7 @@ There is one fundamental flaw in this data that we could not solve. For a model 
 
 \subsection{Irradiance Data}
 
-An important factor in modeling almost any photovoltaic energy system is the measure solar irradiance. Solar irradiance is a measure of power per unit area received  from the sun in the form of electromagnetic radiation (\href{https://www.nasa.gov/mission_pages/sdo/science/Solar%20Irradiance.html}{source}). Solar irradiance can be directly measured on the Earth’s surface or in the atmosphere. It is the most important factor to consider when attempting to forecast the output of a photovoltaic panel system. The National Renewable Energy Laboratory (NREL) maintains a database named the National Solar Radiation Database (NSRDB) which provides historical irradiance measures for any location in the United States (\href{https://nsrdb.nrel.gov/}{source}). We pulled from this database to get several measures of solar irradiance for the locations of each of the systems in half hour increments. 
+An important factor in modeling almost any photovoltaic energy system is the measure solar irradiance. Solar irradiance is a measure of power per unit area received  from the sun in the form of electromagnetic radiation \cite{nasa}. Solar irradiance can be directly measured on the Earth’s surface or in the atmosphere. It is the most important factor to consider when attempting to forecast the output of a photovoltaic panel system. The National Renewable Energy Laboratory (NREL) maintains a database named the National Solar Radiation Database (NSRDB) which provides historical irradiance measures for any location in the United States (\href{https://nsrdb.nrel.gov/}{source}). We pulled from this database to get several measures of solar irradiance for the locations of each of the systems in half hour increments. 
 
 \subsection{System Panel Architecture}
 
@@ -76,15 +77,15 @@ Within a single site, the performance of each model, $M_f^s$ trained on $\chi_f^
 
 \subsection{Transfer Learning}
 
-Our second set of models involved transfer learning. These concerned how well data from other sites could be used to predict production on a different site. We used two different techniques. The first involved building a single model which trained together on the entire training set $X_{Train}=\cup_s X^s_{Train}$. The resulting model, $M_{Int}$ could then be evaluated on each site individually using $Y^s_{Test}$ to obtain $Err(s,M_{Ints})$. This allows us to see how well transfer learning does as compared to the original site specific models. 
+Our second set of models involved transfer learning. These concerned how well data from other sites could be used to predict production on a different site. We used two different techniques. The first involved building a single integrated model which trained together on the entire training set $X_{Train}=\cup_s X^s_{Train}$. The resulting model, $M_{Int}$ could then be evaluated on each site individually using $Y^s_{Test}$ to obtain $Err(s,M_{Int})$. This allows us to see how well transfer learning does as compared to the original site specific models. 
 
-The second transfer learning approach is an example of “zero shot” learning. For each site, we train on $X^{s^c}_{Train} = X_{Train} / X^s_{Train}$ and then evaluate the model $M^{s^c}_Z$ on $Y^s_{Test}$ to obtain $Err(s, M^{s^c}_Z$. Zero-shot is clearly the model to do well on. 
+The second transfer learning approach is an example of “zero shot” learning. (TODO: Explain what zero shot learning is in words. Not obvious from math)For each site, we train on $X^{s^c}_{Train} = X_{Train} / X^s_{Train}$ and then evaluate the model $M^{s^c}_Z$ on $Y^s_{Test}$ to obtain $Err(s, M^{s^c}_Z$. Zero-shot is clearly the model to do well on(TODO: What does this sentence mean?). 
 
-SImply applying transfer learning without further modification will simply fail for this data set. This due to the fact that the magnitude of the output differs based on the size of the site. Thus, it is necessary to add some features which can stand in for the size of the site. In this case we chose to augment $x_i$ with a extra feature $a^s$ represents the total area of all solar panels in a particular site. This is which is strongly correlated with the total PV production and allows us to side-step this problem.
+Applying transfer learning without further modification should simply fail for this data set. This due to the fact that the magnitude of the output differs based on the size of the site. Thus, it is necessary to add some features which can stand in for the size of the site. In this case we chose to augment $x_i$ with an extra feature $a^s$ which represents the total area of all solar panels in a particular site. This feature is strongly correlated with the total PV production and allows us to side-step this problem.
 
 \section{Results}
 
-The results from the several models we built indicate that the most important data involved in predicting the energy output was solar irradiance and that the model works best when building site specific models. For some of the sites irradiance and time together was sufficient to build close to an optimal model for that site, and for all sites the combination of weather with irradiance seems to be the most important factors in building an accurate model. The transfer learning models were significantly worse than the site specific models.
+The results from the several models we built indicate that the most important data involved in predicting the energy output was solar irradiance and that the model works best when building site specific models. For some of the sites irradiance and time together was sufficient to build close to an optimal model for that site, and for all sites the combination of weather with irradiance seems to be the most important factor in building an accurate model. The transfer learning models were significantly worse than the site specific models.
 
 The metric that we are using to evaluate the model is the root mean-squared-error (RMSE),which is one of the standard metrics used to evaluate regression models. RMSE simply takes the square root of the mean squared error and provides a more interpretable metric for comparison across models.
 
@@ -100,14 +101,14 @@ Because there are a significant number of different models we are comparing we a
 
 As the graphs in figure \ref{4-1} indicate, weather only is typically the worst performing model. Adding irradiance and temporal variables increases the performance to varying degrees, and having all of them together is consistently the best model.
 
-To demonstrate a trend amongst all models for all systems, we compare each model to the worst performing model and average those results across all different systems. The worst performing model, on average, is weather only. Here we will define a global model set $\mathbb{M} = \left\{ M_{IR}, M_{IR+T}, M_{W+T}, M_{W+IR}, M_{all}, M_{Z}, M_{Int} \right\}$ which represents an aggregate of the different models error results across the different systems. We’ll define $RMSE(s, M)$ as a function that will obtain the RMSE of a given site and given model. Then 
+To demonstrate a trend amongst all models for all systems, we compare each model to the worst performing model and average those results across all different systems. The worst performing model, on average, is weather only. Here we will define a global model set $$\mathbb{M} = \left\{ M_{IR}, M_{IR+T}, M_{W}, M_{W+T}, M_{W+IR}, M_{all}, M_{Z}, M_{Int} \right\}$$ which represents an aggregate of the different model error results across the different systems. Then 
 \[
-    \%Diff(M \in \mathbb{M}) = \frac{1}{|S|} \sum_{s \in S} RMSE(s,M^s_W) - RMSE(s,M^s)
+    \%Diff(M \in \mathbb{M}) = \frac{1}{|S|} \sum_{s \in S} RMSE(M^s_W) - RMSE(M^s)
 \]
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[scale=0.5]{4-2}
+    \includegraphics[scale=0.75]{../plots/regression_report/4-2}
     \caption{}
     \label{4-2}
 \end{figure}
@@ -118,7 +119,7 @@ As figure \ref{4-2} shows, we see over a 30\% average increase in RMSE when comb
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[scale=0.5]{4-3}
+    \includegraphics[scale=0.75]{../plots/regression_report/4-3}
     \caption{}
     \label{4-3}
 \end{figure}
@@ -141,7 +142,11 @@ Another potential avenue we could have explored would have been to try to charac
     
 The simplest and most important thing that we learned was the importance of irradiance in modeling PV output. Weather turned out to be less impactful than we originally hypothesized and its importance in future models is questionable. We also discovered that a time-series analysis of the data set would be appropriate (perhaps more than regression) for the problem that is modelling but did not have sufficient knowledge to approach the problem from that perspective. How a time-series approach and other modelling choices we mentioned compare to a standard least squares linear regression approach is an open question for future work. What is clear is that now we have a good baseline model and understanding of the problem that we could compare future work to. 
 
-\section*{References}
+
+\bibliography{references}
+\bibliographystyle{plain}
+% \section*{References}
+
 
 \section*{Appendix}
 
