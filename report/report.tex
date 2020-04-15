@@ -36,12 +36,12 @@ We believe each of these goals were met although with certain caveats surroundin
 \section{Data}
 
 \subsection{Solar PV Energy Production}
-The core of our data is centered around energy production data of several different solar photovoltaic panel systems. The data was accessed through a proprietary source so much cannot be said about the production data other than it contains time series data at 15 minute increments for 14 different systems. Some of the systems are built for the rooftop of residential homes and others are for large scale commercial architectures.The range of the data goes back as far as five years for some homes to less than one year for others. Given that the goal of the project is to build a regression model to predict the energy output, the diversity in data lends itself to a higher degree of confidence in the results of a more general model that could be used in a production level software system for any given system with a varying amount of data. Figure \ref{2-1} shows this diversity in the data set. 
+The core of our data is centered around energy production data of several different solar photovoltaic panel systems. The data was accessed through a proprietary source so much cannot be said about the production data other than it contains time series data at 15 minute increments for 13 different systems. Some of the systems are built for the rooftop of residential homes and others are for large scale commercial architectures.The range of the data goes back as far as five years for some homes to less than one year for others. Given that the goal of the project is to build a regression model to predict the energy output, the diversity in data lends itself to a higher degree of confidence in the results of a more general model that could be used in a production level software system for any given system with a varying amount of data. Figure \ref{2-1} shows this diversity in the data set.
 
 \begin{figure}[!htb]
-    \includegraphics[width=\textwidth]{2-1}
-    \label{2-1} 
+    \includegraphics[width=\textwidth]{../plots/regression_report/2-1}
     \caption{Duration (left) and average monthly production (right) for each system. The systems differ significantly. The longest time period is roughly five years whereas the shortest time period is less than a year. There is even more variation in the average monthly production, where the difference in production between the highest and lowest is almost 2000 kWh.}
+    \label{2-1} 
 \end{figure}
 
 \subsection{Weather Data}
@@ -78,7 +78,7 @@ Instead of splitting the data by sampling each hourly training point independent
 \subsection{Site Specific Models}
 
 The first set of linear models were intended to test the adequacy of specific classes of features for predicting production at a specific site. Thus, we created 13 sets of models, $M^s$ for the 13 separate sites using only $X^s$,$Y^s$. This allowed us to sidestep the ways in which sites might differ from one another and focus only on which variables were useful for predicting solar production. It also served as a baseline which we could compare to transfer learning approaches.
-Within each site, we built individual models trained on each combination of feature subsets $\chi_f^s \in \left\{ IR^s,IR^s + T^s, IR^s + W^s, W^s,W^s + T^s, all \right\}$ where ``all'' denotes $I^s+W^s+T^s$. 
+Within each site, we built individual models trained on each combination of feature subsets $\chi_f^s \in \left\{ IR^s,IR^s + T^s, IR^s + W^s, W^s,W^s + T^s, all \right\}$ where ``all'' denotes $IR^s+W^s+T^s$. 
 
 Within a single site, the performance of each model, $M_f^s$ trained on $\chi_f^s$, can be evaluated to give the relative importance of each feature combination.
 
@@ -88,7 +88,7 @@ Our second set of models involved transfer learning. These concerned how well da
 
 The second transfer learning approach is an example of “zero shot” learning. (TODO: Explain what zero shot learning is in words. Not obvious from math)For each site, we train on $X^{s^c}_{Train} = X_{Train} / X^s_{Train}$ and then evaluate the model $M^{s^c}_Z$ on $Y^s_{Test}$ to obtain $Err(s, M^{s^c}_Z$. Zero-shot is clearly the model to do well on(TODO: What does this sentence mean?). 
 
-Applying transfer learning without further modification should simply fail for this data set. This due to the fact that the magnitude of the output differs based on the size of the site. Thus, it is necessary to add some features which can stand in for the size of the site. In this case we chose to augment $x_i$ with an extra feature $a^s$ which represents the total area of all solar panels in a particular site. This feature is strongly correlated with the total PV production and allows us to side-step this problem.
+Applying transfer learning without further modification should fail for this data set. This is due to the fact that the magnitude of the output differs based on the size of the site. Thus, it is necessary to add some features which can stand in for the size of the site. In this case we chose to augment $x_i$ with an extra feature $a^s$ which represents the total area of all solar panels in a particular site. This feature is strongly correlated with the total PV production and allows us to side-step this problem.
 
 \section{Results}
 
@@ -98,40 +98,38 @@ The metric that we are using to evaluate the model is the root mean squared erro
 
 \subsection{Site Specific Results}
 
-Because there are a significant number of different models we are comparing we are going to select a few sites that are somewhat representative of the data to graphically show the results of all models. The table in the appendix shows the numerical results of all of the models for all of the different sites. We handpicked four different sites that represent some of the variation in the data – one has data for a long period (site 103941), one has a relatively high monthly average production (717196), and the others are somewhere in between (896164 and 569932). The following graph shows the RMSE values for each system and for each different site specific model. 
+Because there are a significant number of different models we are comparing we are going to select a few sites that are somewhat representative of the data to graphically show the results of all models. The table in the appendix shows the numerical results of all of the models for all of the different sites. We handpicked four different sites that represent some of the variation in the data – one has data for a long period (site 103941), one has a relatively high monthly average production (717196), and the others are somewhere in between (896164 and 569932). Figure \ref{4-1} shows the RMSE values for each system and for each different site specific model. 
 
 \begin{figure}[!htb]
     \includegraphics[width=\textwidth]{4-1}
+    \caption{RMSE for each feature combination across four different sites. Weather only is typically the worst performing model. Adding irradiance and temporal variables increases the performance to varying degrees, and having all of them together is consistently the best model.}
     \label{4-1}
-    \caption{RMSE for each feature combination across four different sites.}
 \end{figure}
-
-As the graphs in Figure \ref{4-1} indicate, weather only is typically the worst performing model. Adding irradiance and temporal variables increases the performance to varying degrees, and having all of them together is consistently the best model.
-
 To demonstrate a trend amongst all models for all systems, we compare each model to the worst performing model and average those results across all different systems. The worst performing model, on average, is weather only. Here we will define a global model set $$\mathbb{M} = \left\{ M_{IR}, M_{IR+T}, M_{W}, M_{W+T}, M_{W+IR}, M_{all}, M_{Z}, M_{Int} \right\}$$ which represents an aggregate of the different model error results across the different systems. Then 
 \[
     \%Diff(M \in \mathbb{M}) = \frac{1}{|S|} \sum_{s \in S} RMSE(M^s_W) - RMSE(M^s)
 \]
+Figure \ref{4-2} shows the results of this function for all models but weather, which is used for comparison
 
 \begin{figure}[!htb]
     \centering
     \includegraphics[scale=0.75]{../plots/regression_report/4-2}
-    \caption{}
+    \caption{We see over a 30\% average increase in RMSE when combining all models together. Irradiance alone performs better than weather, and the combination of weather and irradiance almost performs well as well as weather, irradiance, and time together.}
     \label{4-2}
 \end{figure}
 
-As Figure \ref{4-2} shows, we see over a 30\% average increase in RMSE when combining all models together. Irradiance alone performs better than weather, and the combination of weather and irradiance almost performs well as well as weather, irradiance, and time together.
-
 \subsection{Transfer Learning}
 
+The transfer learning models, as Figure \ref{4-3} shows, perform significantly worse than the site specific models. 
 \begin{figure}[!htb]
     \centering
     \includegraphics[scale=0.75]{../plots/regression_report/4-3}
-    \caption{}
+    \caption{
+        The average of the transfer learning models are close to a factor of 1.5 times worse than the baseline weather only model.
+    }
     \label{4-3}
 \end{figure}
 
-The transfer learning models, as Figure \ref{4-3} shows, perform significantly worse than the site specific models. The average the transfer learning models are a factor of 1.5 times worse than the baseline weather model.
 
 \FloatBarrier
 
@@ -143,11 +141,11 @@ We must, however, be realistic about what this baseline represents. As we have a
 
 It is hardly surprising, given that solar irradiance is actually a measure of theoretical energy from the sun, that irradiance would be highly predictive of PV output. It is still unclear, however, why there is such a large difference in this impact between the sites (see Figure \ref{4-1}). We hypothesize that it might have to do with the precision of the irradiance measurements at various sites. For irradiance, as for weather, we had to pull data from the external source nearest to our site. This means that the data gathered for each site might differ from the true data at that site (if we could somehow measure it) by varying degrees. If this were the case, then it might explain why irradiance would be less predictive for some sites rather than others. This is a direction we would like to pursue further if time allowed.
 
-Transfer learning, in both the integrated and one-shot cases performed much worse than the individualized models. It appears that sites are too dissimilar to see any gains from transfer learning. The most likely possible explanation is that the sites themselves are so different (both in terms of time and in scale) that data from one is not relevant to another. We were only able to integrate one feature from the sites’ configuration (PV area) into the model. There are additional features we could have added such as panel tilt and azimuth but this is difficult to represent because not all panels in a given system are homogenous. This would require a more complex model which could deal with the dynamic sizing of the systems  and was outside of the scope of this project.
+Transfer learning, in both the integrated and one-shot cases performed much worse than the individualized models. The most likely possible explanation is that the sites themselves are so different (both in terms of time and in scale) that data from one is not relevant to another. We were only able to integrate one feature from the sites’ configuration (PV area) into the model. There are additional features we could have added such as panel tilt and azimuth but this is difficult to represent because not all panels in a given system are homogenous. This would require a more complex model which could deal with the dynamic sizing of the systems  and was outside of the scope of this project.
     
-Another potential avenue we could have explored would have been to try to character the absolute (as compared to relative) performance of the data. A good place to start would have been to look at the RMSE normalized by the scale of the data although more in depth statistical analysis would be required to quantify this properly.There are also regularization techniques such as lasso and ridge regression that would have been interesting to compare to least-square regression but were not used because of time limitations.
+Another potential avenue we could have explored would have been to try to measure the absolute (as compared to relative) performance of the data. A good place to start would have been to look at the RMSE normalized by the scale of the data although more in depth statistical analysis would be required to quantify this properly.There are also regularization techniques such as lasso and ridge regression that would have been interesting to compare to least-square regression but were not used because of time limitations.
     
-The simplest and most important thing that we learned was the importance of irradiance in modeling PV output. Weather turned out to be less impactful than we originally hypothesized and its importance in future models is questionable. We also discovered that a time-series analysis of the data set would be appropriate (perhaps more than regression) for the problem that is modelling but did not have sufficient knowledge to approach the problem from that perspective. How a time-series approach and other modelling choices we mentioned compare to a standard least squares linear regression approach is an open question for future work. What is clear is that now we have a good baseline model and understanding of the problem that we could compare future work to. 
+The simplest and most important thing that we learned was the importance of irradiance in modeling PV output. Weather turned out to be less impactful than we originally hypothesized and its importance in future models is questionable. We also discovered that a time-series analysis of the data set would be appropriate (perhaps more than regression) for the problem we are modelling but did not have sufficient knowledge to approach the problem from that perspective. How a time-series approach and other modelling choices we mentioned compare to a standard least squares linear regression approach is an open question for future work. What is clear is that now we have a good baseline model and understanding of the problem that we could compare future work to. 
 
 
 \bibliography{references}
