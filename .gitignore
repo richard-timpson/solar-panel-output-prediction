@@ -6,3 +6,15 @@
 *.vscode
 .vscode/*
 __pycache__
+
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.gz
+report.log
+report.out
+report.pdf 
+
+plots/*
