@@ -3,6 +3,7 @@ import json
 
 DATA_DIR = '../../data'
 
+
 def read_weather_irr_df(site):
     site_id = site['id']
     irradiance_id = site['irradiance_site_id']
@@ -17,3 +18,10 @@ def read_md():
     with open(f'{DATA_DIR}/production_data/site_metadata.json', 'r') as file:
         s = file.read()
     return json.loads(s)
+    
+def get_site_by_id(site_id):
+    for site in site_md:
+        if site['id'] == site_id:
+            return site 
+
+site_md = read_md()
