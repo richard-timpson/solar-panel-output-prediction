@@ -1,9 +1,10 @@
 import requests
-
+import pathlib
+path = pathlib.Path(__file__).parent.absolute()
 class DarkSkyApi:
 
     def __init__(self, verbose):
-        with open('darksky_api_key.txt', 'r') as f:
+        with open(f'{path}/keys/darksky_api_key.txt', 'r') as f:
             self.key = f.read()
         
         self.base_url = 'https://api.darksky.net'
@@ -28,7 +29,7 @@ class DarkSkyApi:
 class SolCastApi:
 
     def __init__(self, verbose):
-        with open('solcast_api_key.txt') as f:
+        with open(f'{path}/keys/solcast_api_key.txt') as f:
             self.key = f.read() 
         
         self.base_url = 'https://api.solcast.com.au'

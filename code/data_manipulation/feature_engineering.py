@@ -5,8 +5,9 @@ from calendar import isleap
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 
+features = ['GHI', 'DHI', 'DNI', 'precipIntensity', 'precipProbability', 'temperature', 'apparentTemperature', 'dewPoint', 'humidity', 'windSpeed', 'windBearing', 'windGust', 'cloudCover', 'uvIndex', 'visibility', 'day', 'month', 'hour']
 
-def set_irr_df_dt(df, tz):
+def set_nrel_irr_df_dt(df, tz):
     df['date'] = pd.to_datetime(df[['Year', 'Month', 'Day', 'Hour', 'Minute']])
     df = df.set_index('date')
     df = df.resample('1H').mean()
@@ -25,15 +26,17 @@ def combine_weather_df(irr_df, prod_df):
     # It's important to note that the resulting datetime index will be in UTC after the merge 
     return df
 
+def clean_weather_features(df):
+    cols_to_drop = ['precipType', 'precipAccumulation', 'pressure', 'ozone', 'summary', 'icon']
+    cols_to_drop = [col for col in cols_to_drop if col in list(df.columns)]
+    df = df.drop(columns=cols_to_drop)
+    return df 
+
 def clean_df(df):
     df = df.dropna(subset=['production'])
     df = df[df['production'] != 0]
 
-    df['precipType'] = df['precipType'].fillna('none')
-    df = df.drop(columns=['precipAccumulation', 'pressure', 'ozone'])
-    df = pd.get_dummies(data=df, drop_first=True, columns=['precipType'])
-    # df = df.drop('precipType')
-    # df = df.drop(columns=['precipType'])
+    df = clean_weather_features(df)
     return df 
 
 def day_trans(row):
@@ -61,9 +64,14 @@ def impute_values(df):
 def get_final_df(site, prod_df, irr_df): 
     prod_df = set_prod_df_dt(prod_df)
     timezone = site['location']['timeZone']
-    irr_df = set_irr_df_dt(irr_df, timezone)
+    irr_df = set_nrel_irr_df_dt(irr_df, timezone)
     df = combine_weather_df(irr_df, prod_df)
     df = clean_df(df)
     df = add_seasonality(df)
     df = impute_values(df)
+    df = reorder_columns(df, features + ['production'])
+    return df 
+
+def reorder_columns(df, cols):
+    df = df[cols]
     return df 
